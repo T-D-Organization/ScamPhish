@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Jumma Mubarak - Blessed Friday</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            position: relative;
+            overflow-x: hidden;
+        }
+        
+        /* Islamic pattern background */
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: radial-gradient(circle, rgba(255,255,255,0.1) 1px, transparent 1px);
+            background-size: 30px 30px;
+            pointer-events: none;
+        }
+        
+        .container {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 30px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+            max-width: 500px;
+            width: 100%;
+            animation: slideIn 0.5s ease-out;
+            position: relative;
+            z-index: 1;
+        }
+        
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            padding: 40px 20px;
+            text-align: center;
+            position: relative;
+        }
+        
+        .masjid {
+            font-size: 80px;
+            animation: bounce 2s ease-in-out infinite;
+            display: inline-block;
+        }
+        
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+        
+        .header h1 {
+            color: white;
+            font-size: 42px;
+            margin-top: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+            letter-spacing: 2px;
+        }
+        
+        .header p {
+            color: rgba(255,255,255,0.9);
+            font-size: 18px;
+            margin-top: 10px;
+        }
+        
+        .content {
+            padding: 30px;
+        }
+        
+        .dua-section {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            padding: 20px;
+            border-radius: 20px;
+            margin-bottom: 25px;
+            text-align: center;
+            border-right: 5px solid #1e3c72;
+            border-left: 5px solid #1e3c72;
+        }
+        
+        .dua-section h3 {
+            color: #1e3c72;
+            font-size: 20px;
+            margin-bottom: 10px;
+        }
+        
+        .dua-text {
+            font-size: 22px;
+            font-weight: bold;
+            color: #2a5298;
+            font-family: 'Amiri', serif;
+            line-height: 1.6;
+            direction: rtl;
+        }
+        
+        .translation {
+            color: #555;
+            font-size: 14px;
+            margin-top: 10px;
+            font-style: italic;
+        }
+        
+        .sunnah {
+            background: #fff3e0;
+            padding: 15px;
+            border-radius: 15px;
+            margin-bottom: 25px;
+            border-left: 4px solid #f39c12;
+        }
+        
+        .sunnah h4 {
+            color: #e67e22;
+            margin-bottom: 10px;
+        }
+        
+        .sunnah ul {
+            padding-left: 20px;
+        }
+        
+        .sunnah li {
+            margin: 8px 0;
+            color: #555;
+        }
+        
+        .timing {
+            display: flex;
+            justify-content: space-around;
+            margin: 25px 0;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        
+        .time-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 15px;
+            border-radius: 15px;
+            text-align: center;
+            flex: 1;
+            min-width: 100px;
+        }
+        
+        .time-card h4 {
+            font-size: 12px;
+            opacity: 0.9;
+        }
+        
+        .time-card p {
+            font-size: 18px;
+            font-weight: bold;
+            margin-top: 5px;
+        }
+        
+        .button-group {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin: 25px 0;
+        }
+        
+        .btn {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 50px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: transform 0.3s, box-shadow 0.3s;
+            text-decoration: none;
+            display: inline-block;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+            color: white;
+            box-shadow: 0 4px 15px rgba(17,153,142,0.4);
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(17,153,142,0.5);
+        }
+        
+        .btn-secondary {
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            color: white;
+        }
+        
+        .btn-secondary:hover {
+            transform: translateY(-2px);
+        }
+        
+        .footer {
+            background: #1e3c72;
+            padding: 20px;
+            text-align: center;
+            color: rgba(255,255,255,0.8);
+            font-size: 12px;
+        }
+        
+        @media (max-width: 600px) {
+            .header h1 {
+                font-size: 32px;
+            }
+            
+            .dua-text {
+                font-size: 18px;
+            }
+            
+            .timing {
+                flex-direction: column;
+            }
+            
+            .button-group {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="masjid">🕌</div>
+            <h1>Jumma Mubarak! ✨</h1>
+            <p>Best day of the week - Friday</p>
+        </div>
+        
+        <div class="content">
+            <div class="dua-section">
+                <h3>📖 Surah Al-Kahf Ki Tilawat</h3>
+                <p style="margin: 10px 0;">Jumma ke din Surah Al-Kahf parhna sunnat hai</p>
+                <div class="dua-text">
+                    " مَنْ قَرَأَ سُورَةَ الْكَهْفِ يَوْمَ الْجُمُعَةِ أَضَاءَ لَهُ مِنَ النُّورِ مَا بَيْنَ الْجُمُعَتَيْنِ "
+                </div>
+                <div class="translation">
+                    "Jo Shakhs Jumma ke din Surah Al-Kahf parhta hai, do Jumma ke darmiyan uske liye noor hota hai"
+                </div>
+            </div>
+            
+            <div class="sunnah">
+                <h4>⭐ Jumma Ke Sunnah Actions:</h4>
+                <ul>
+                    <li>🛁 Ghusl karna (Take bath)</li>
+                    <li>👔 Acha kapra pehenna (Wear best clothes)</li>
+                    <li>👃 Itr lagana (Apply perfume)</li>
+                    <li>🚶 Paidal masjid jana (Walk to mosque if possible)</li>
+                    <li>🕯️ Darood shareef parhna (Send blessings on Prophet PBUH)</li>
+                    <li>🤲 Dua qabool hone ka waqt (Last hour of Friday)</li>
+                </ul>
+            </div>
+            
+            <div class="timing">
+                <div class="time-card">
+                    <h4>🕌 Namaz Timing</h4>
+                    <p>1:00 PM - 2:00 PM</p>
+                </div>
+                <div class="time-card">
+                    <h4>🤲 Dua Acceptance</h4>
+                    <p>Last Hour</p>
+                </div>
+                <div class="time-card">
+                    <h4>📖 Khutba</h4>
+                    <p>Before Prayer</p>
+                </div>
+            </div>
+            
+            <div class="button-group">
+                <button class="btn btn-primary" onclick="shareJumma()">📤 Share Jumma Mubarak</button>
+                <button class="btn btn-secondary" onclick="showDua()">🤲 Dua for Today</button>
+            </div>
+        </div>
+        
+        <div class="footer">
+            <p>🌙 "Indeed, prayer is enjoined upon the believers at prescribed times." (Quran 4:103)</p>
+            <p style="margin-top: 10px;">❤️ Jumma Mubarak! May Allah accept your prayers ❤️</p>
+            <p style="margin-top: 5px;">🕌 Best day to seek forgiveness 🕌</p>
+        </div>
+    </div>
+    
+    <script>
+        function shareJumma() {
+            const message = "🕌 Jumma Mubarak! 🌙\n\nMay Allah accept our prayers, forgive our sins, and bless us with peace and prosperity.\n\n✨ Don't forget to read Surah Al-Kahf today! 📖\n\n🤲 Jumma Mubarak to you and your family!";
+            
+            if (navigator.share) {
+                navigator.share({
+                    title: 'Jumma Mubarak',
+                    text: message,
+                }).catch(() => {
+                    alert(message);
+                });
+            } else {
+                alert(message);
+            }
+        }
+        
+        function showDua() {
+            const dua = "🤲 Jumma Ke din ki Dua:\n\n" +
+                       "اَللّٰهُمَّ اِنَّكَ عَفُوٌّ تُحِبُّ الْعَفْوَ فَاعْفُ عَنِّي\n\n" +
+                       "Translation:\n" +
+                       "O Allah, You are Forgiving and love forgiveness, so forgive me.\n\n" +
+                       "⏰ Yeh dua last hour mein parhna best hai!";
+            alert(dua);
+        }
+        
+        // Add floating blessing particles
+        function createBlessings() {
+            const blessings = ['🕌', '⭐', '✨', '🌙', '🕯️', '📿', '🤲'];
+            for(let i = 0; i < 10; i++) {
+                let blessing = document.createElement('div');
+                blessing.innerHTML = blessings[Math.floor(Math.random() * blessings.length)];
+                blessing.style.position = 'fixed';
+                blessing.style.fontSize = (Math.random() * 25 + 15) + 'px';
+                blessing.style.left = Math.random() * 100 + '%';
+                blessing.style.top = Math.random() * 100 + '%';
+                blessing.style.animation = 'bounce ' + (Math.random() * 3 + 2) + 's ease-in-out infinite';
+                blessing.style.opacity = '0.2';
+                blessing.style.pointerEvents = 'none';
+                document.body.appendChild(blessing);
+            }
+        }
+        
+        // Click effect
+        document.body.addEventListener('click', function(e) {
+            let heart = document.createElement('div');
+            heart.innerHTML = '💚';
+            heart.style.position = 'absolute';
+            heart.style.left = e.pageX + 'px';
+            heart.style.top = e.pageY + 'px';
+            heart.style.fontSize = '25px';
+            heart.style.pointerEvents = 'none';
+            heart.style.animation = 'bounce 0.5s ease-out';
+            document.body.appendChild(heart);
+            
+            setTimeout(() => {
+                heart.remove();
+            }, 500);
+        });
+        
+        window.onload = function() {
+            createBlessings();
+            console.log('🕌 Jumma Mubarak! Best day of the week ✨');
+            
+            // Show greeting
+            setTimeout(() => {
+                console.log('🤲 May Allah accept your duas!');
+            }, 1000);
+        };
+    </script>
+</body>
+</html>
