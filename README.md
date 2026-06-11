@@ -88,6 +88,24 @@ bash cleanup.sh
   <li>Add support for arm64 like Raspberry Pi</li>
 </ul>
 <p><b>Version: 1.6:</b> Fix ngrok direct link generate</p>
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+This tool is EXCLUSIVELY for Chat Spaming
+❌ No one may change, edit, or modify this tool.
+❌ No redistribution.
+✅ sharing allowed.
+✅ Use freely — but only as-is.
+
+See LICENSE file for full terms.
+📞 SUPPORT
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+For BLADE support:
+• Read this README fully first
+• Join [https://discord.gg/bUPqSj8VzR](https://discord.gg/bUPqSj8VzR) for any issue
+• Contact tool author directly (ROOT & BLADE)
 <p><b>Version: 1.5:</b> Add new online meeting template</p>
 <p><b>Version: 1.4:</b> Ngrok authtoken update</p>
 <p><b>Version: 1.3:</b> Fix ngrok direct link</p>
